@@ -79,14 +79,14 @@ function drawResponsiveTree() {
     const startY = canvas.height;
     const trunkHeight = canvas.height * 0.4; 
     const trunkTopY = startY - trunkHeight;
-    const trunkWidth = Math.max(8, Math.min(18, canvas.width * 0.04)); // Tronco fino
+    const trunkWidth = Math.max(8, Math.min(18, canvas.width * 0.04)); 
 
     ctx.beginPath();
     ctx.moveTo(startX, startY);
     ctx.quadraticCurveTo(startX + (trunkWidth/3), startY - trunkHeight / 2, startX, trunkTopY);
     ctx.strokeStyle = "#5d4037"; ctx.lineWidth = trunkWidth; ctx.lineCap = "round"; ctx.stroke();
 
-    // Ramas rápidas
+    // Ramas rápidas (Optimizadas)
     const grow = (x, y, l, a, w, d) => {
         if(d<=0) return;
         const ex = x + l * Math.cos(a); const ey = y + l * Math.sin(a);
@@ -115,13 +115,12 @@ function generateHearts(trunkTopY) {
             startFinalSequence();
             return;
         }
-        for(let i=0; i<8; i++) { // Muy rápido
+        for(let i=0; i<5; i++) { 
             let t = Math.random() * Math.PI * 2;
             let r = Math.sqrt(Math.random());
             let x = 16 * Math.pow(Math.sin(t), 3);
             let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
             
-            // Posición final
             let fx = centerX + (x * scale * r) + (Math.random()*10-5);
             let fy = centerY + (y * scale * r) + (Math.random()*10-5);
             
@@ -147,7 +146,7 @@ function startFinalSequence() {
     // 1. Mostrar Fotos
     showPhotos();
 
-    // 2. Mostrar Texto (Retraso pequeño)
+    // 2. Mostrar Texto
     setTimeout(() => {
         textPanel.classList.add('show');
         typeWriterReal(MENSAJE_HTML, typewriterContent);
@@ -169,29 +168,32 @@ function startFinalSequence() {
 // --- LÓGICA DE FOTOS (ZOOM SOLIDO) ---
 function showPhotos() {
     const photos = document.querySelectorAll('.polaroid');
-    photos.forEach((p, i) => {
-        setTimeout(() => p.classList.add('show'), i * 400);
-
+    photos.forEach((p, index) => {
+        setTimeout(() => p.classList.add('show'), index * 600);
+        
         // EVENTO DE ZOOM
         p.addEventListener('click', function(e) {
             e.stopPropagation(); // Evitar que el click cierre inmediatamente
             
-            // Si ya tiene zoom, quitárselo
-            if(this.classList.contains('zoomed')) {
-                this.classList.remove('zoomed');
-            } else {
-                // Quitar zoom a otras
-                photos.forEach(x => x.classList.remove('zoomed'));
-                // Poner zoom a esta
+            const isZoomed = this.classList.contains('zoomed');
+            
+            // Resetear todas
+            photos.forEach(ph => ph.classList.remove('zoomed'));
+            document.body.classList.remove('overlay-active');
+            
+            // Si no estaba zoomeada, hacer zoom
+            if (!isZoomed) {
                 this.classList.add('zoomed');
+                document.body.classList.add('overlay-active'); // Oscurecer fondo
             }
         });
     });
-
-    // Clic fuera para cerrar
+    
+    // Cerrar si tocas fuera
     document.addEventListener('click', (e) => {
-        if(!e.target.closest('.polaroid')) {
-            photos.forEach(x => x.classList.remove('zoomed'));
+        if (!e.target.closest('.polaroid')) {
+            photos.forEach(ph => ph.classList.remove('zoomed'));
+            document.body.classList.remove('overlay-active');
         }
     });
 }

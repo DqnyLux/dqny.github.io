@@ -1,5 +1,5 @@
 :root {
-    --bg-color: #ffeef2; /* Rosa muy suave */
+    --bg-color: #ffeef2;
     --heart-color: #d32f2f;
     --text-color: #5d4037;
 }
@@ -8,8 +8,7 @@ body {
     margin: 0;
     height: 100vh;
     background-color: var(--bg-color);
-    /* Fuente por defecto elegante */
-    font-family: 'Lora', serif; 
+    font-family: 'Lora', serif; /* Fuente elegante por defecto */
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -41,7 +40,7 @@ body {
 .animation-area {
     width: 100%; height: 100%;
     position: absolute; top: 0; left: 0;
-    z-index: 5; /* Base */
+    z-index: 5;
 }
 
 #tree-wrapper {
@@ -56,32 +55,31 @@ body {
     width: 100%; height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center; /* Centrado en pantalla */
-    z-index: 50; /* Por encima del árbol */
-    pointer-events: none; /* DEJA PASAR CLICKS A LAS FOTOS */
+    align-items: center; 
+    z-index: 40; /* Nivel alto, pero las fotos zoomeadas serán más altas */
+    pointer-events: none; /* DEJA PASAR CLICKS A LAS FOTOS DE FONDO */
 }
 
 /* Tarjeta de Cristal Bonita */
 .card-glass {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(10px); /* Efecto vidrio borroso */
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.7); /* Blanco semitransparente */
+    backdrop-filter: blur(12px); /* Efecto borroso detrás */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
     border-radius: 20px;
-    padding: 25px;
-    width: 85%; /* Ancho en móvil */
+    padding: 30px;
+    width: 85%;
     max-width: 400px;
     text-align: center;
     
-    /* Animación de entrada */
     opacity: 0;
     transform: translateY(30px);
     transition: all 1s ease;
-    pointer-events: auto; /* IMPORTANTE: Permite scroll y selección en el texto */
+    pointer-events: auto; /* Permite scroll en el texto */
     
-    max-height: 40vh; /* Para que no tape todo el árbol */
-    overflow-y: auto; /* Scroll si es mucho texto */
+    max-height: 50vh;
+    overflow-y: auto;
 }
 
 .text-panel.show .card-glass {
@@ -92,7 +90,7 @@ body {
 /* Tipografía Romántica */
 #typewriter-content {
     font-family: 'Lora', serif;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     line-height: 1.6;
     color: var(--text-color);
 }
@@ -100,7 +98,7 @@ body {
 #typewriter-content h1 {
     font-family: 'Dancing Script', cursive; /* Fuente manuscrita */
     color: var(--heart-color);
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     margin: 0 0 15px 0;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
@@ -114,22 +112,22 @@ body {
     padding-top: 10px;
 }
 
-/* --- FOTOS POLAROID (FUNCIONALES EN MÓVIL) --- */
+/* --- FOTOS POLAROID (FUNCIONALES) --- */
 #photo-gallery {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none; 
-    z-index: 60; /* Encima de todo, incluso del texto si es necesario */
+    z-index: 60; /* Encima del texto normal */
 }
 
 .polaroid {
     position: absolute;
     background: #fff;
-    padding: 6px 6px 20px 6px;
+    padding: 8px 8px 25px 8px; /* Marco blanco abajo */
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    width: 100px; /* Tamaño inicial pequeño */
+    width: 110px; 
     opacity: 0;
     transform: translateY(-50px);
-    transition: opacity 0.5s, transform 0.5s;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: auto; /* HABILITA EL TOUCH */
     cursor: pointer;
     border-radius: 4px;
@@ -137,37 +135,44 @@ body {
 
 .polaroid img {
     width: 100%; height: auto; display: block;
-    border-radius: 2px;
+    border-radius: 2px; pointer-events: none;
 }
 
 /* Chincheta decorativa */
 .pin {
-    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
     width: 12px; height: 12px; background: #d32f2f; border-radius: 50%;
     box-shadow: 1px 1px 3px rgba(0,0,0,0.3); z-index: 2;
 }
 
 /* Posiciones */
-.p1 { top: 12%; left: 5%; }
-.p2 { top: 15%; right: 5%; }
-.p3 { top: 40%; left: 5%; } /* Movido a la izquierda para no tapar el centro */
+.p1 { top: 15%; left: 8%; transform: rotate(-12deg); }
+.p2 { top: 18%; right: 8%; transform: rotate(10deg); }
+.p3 { top: 45%; left: 5%; transform: rotate(-5deg); } /* Lado izquierdo */
 
 .polaroid.show { opacity: 1; }
-.p1.show { transform: rotate(-12deg); }
-.p2.show { transform: rotate(10deg); }
-.p3.show { transform: rotate(-5deg); }
 
 /* --- CLASE ZOOM (MAGIA AQUÍ) --- */
+/* Cuando tiene esta clase, ignora todo y se pone encima */
 .polaroid.zoomed {
     position: fixed !important;
     top: 50% !important; left: 50% !important;
     width: 85vw !important; /* Grande en móvil */
     max-width: 350px !important;
     transform: translate(-50%, -50%) rotate(0deg) scale(1) !important;
-    z-index: 10000 !important; /* SUPERIOR A TODO */
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 99999 !important; /* SUPERIOR A TODO (TEXTO Y ARBOL) */
+    box-shadow: 0 50px 100px rgba(0,0,0,0.7);
+    transition: all 0.4s ease-out;
 }
+
+/* Fondo oscuro al hacer zoom (opcional, ayuda a resaltar) */
+body.overlay-active::after {
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 99990; pointer-events: none;
+    animation: fadeIn 0.3s forwards;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 
 /* --- BOTÓN CORAZÓN --- */
 #heart-trigger {
@@ -186,6 +191,7 @@ svg { width: 100%; height: 100%; fill: #ff4d6d; filter: drop-shadow(0 0 10px rgb
 .flower.bloom { font-size: var(--size); }
 .infinite-flower { position: absolute; font-size: var(--size); z-index: 1; opacity: 0.9; animation: fall 5s linear forwards; }
 @keyframes fall { 100% { top: 110%; opacity: 0; transform: rotate(90deg); } }
+#player { position: absolute; top: -9999px; }
 
 /* PC Ajustes */
 @media (min-width: 768px) {
