@@ -2,14 +2,11 @@
 const FECHA_INICIO = new Date("2023-08-23"); 
 const MENSAJE_HTML = `
 <h1>Para mi amor:</h1>
-Como las hojas de este árbol,
-mi amor por ti es infinito.
+Igual que este árbol florece,
+mi amor por ti crece cada día.
 
-Aunque el tiempo pase y el
-viento sople, mis raíces
-siempre estarán contigo.
-
-Gracias por hacerme feliz.
+Eres mi lugar seguro y
+mi momento favorito.
 <br>
 <strong>¡Te Amo!</strong>
 `;
@@ -27,7 +24,7 @@ const treeWrapper = document.getElementById('tree-wrapper');
 const textPanel = document.getElementById('textPanel');
 const typewriterContent = document.getElementById('typewriter-content');
 
-// --- AJUSTE DE PANTALLA (RESPONSIVE) ---
+// --- RESPONSIVE CANVAS ---
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -37,28 +34,20 @@ resizeCanvas();
 
 let isAnimating = false;
 let leavesArray = []; 
-let player; 
 
-// --- YOUTUBE API ---
-window.onYouTubeIframeAPIReady = function() {
-    player = new YT.Player('player', {
-        height: '1', width: '1',
-        videoId: YOUTUBE_VIDEO_ID,
-        playerVars: {
-            'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': YOUTUBE_VIDEO_ID, 'playsinline': 1
-        },
-        events: { 'onReady': (e) => e.target.setVolume(70) }
-    });
-};
-
-// --- CLIC INICIAL ---
+// --- 1. CLIC INICIAL ---
 heartTrigger.addEventListener('click', () => {
     if(isAnimating) return;
     isAnimating = true;
     instruction.style.opacity = 0;
     
-    // Play música (funciona en móvil al toque)
-    if (player && player.playVideo) player.playVideo();
+    // Música iframe (Método infalible)
+    const musicIframe = document.createElement('iframe');
+    musicIframe.setAttribute('src', `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&loop=1&playlist=${YOUTUBE_VIDEO_ID}&controls=0&showinfo=0&autohide=1&mute=0`);
+    musicIframe.style.width = '1px'; musicIframe.style.height = '1px';
+    musicIframe.style.opacity = '0'; musicIframe.style.position = 'absolute';
+    musicIframe.allow = "autoplay"; 
+    document.body.appendChild(musicIframe);
 
     // Gota
     heartPath.setAttribute('d', 'M12,2c-5,0-9,4-9,9c0,5,9,13,9,13s9-8,9-13C21,6,17,2,12,2z');
@@ -73,18 +62,20 @@ heartTrigger.addEventListener('click', () => {
 });
 
 
-// --- ÁRBOL QUE SE ADAPTA AL MÓVIL ---
+// --- 2. ÁRBOL PROPORCIONAL (SOLUCIÓN AL TRONCO GRANDE) ---
 function drawResponsiveTree() {
     const startX = canvas.width / 2;
     const startY = canvas.height;
     
-    // Altura del tronco basada en la pantalla (40% de la altura)
+    // Altura del tronco: 40% de la pantalla
     const trunkHeight = canvas.height * 0.4; 
     const trunkTopY = startY - trunkHeight;
-    // Ancho proporcional
-    const trunkWidth = Math.max(15, canvas.width * 0.05); 
+    
+    // CORRECCIÓN: Grosor dinámico. Mínimo 8px, Máximo 22px, basado en el ancho.
+    // Esto hace que en celular el tronco sea fino y elegante.
+    const trunkWidth = Math.max(8, Math.min(22, canvas.width * 0.035)); 
 
-    // A. Tronco
+    // Tronco
     ctx.beginPath();
     ctx.moveTo(startX, startY);
     ctx.quadraticCurveTo(startX + (trunkWidth/3), startY - trunkHeight / 2, startX, trunkTopY);
@@ -93,25 +84,26 @@ function drawResponsiveTree() {
     ctx.lineCap = "round";
     ctx.stroke();
 
-    // B. Ramas (Proporcionales)
+    // Ramas
     setTimeout(() => {
-        let h = trunkHeight * 0.7; // Altura relativa
+        let h = trunkHeight * 0.75;
         growSubBranches(startX, startY - h, h*0.5, -Math.PI/2 - 0.7, trunkWidth*0.7, 3);
         growSubBranches(startX, startY - h, h*0.5, -Math.PI/2 + 0.7, trunkWidth*0.7, 3);
     }, 200);
 
     setTimeout(() => {
-        let h = trunkHeight * 0.9;
+        let h = trunkHeight * 0.95; // Casi arriba
         growSubBranches(startX, startY - h, h*0.4, -Math.PI/2 - 0.4, trunkWidth*0.6, 3);
         growSubBranches(startX, startY - h, h*0.4, -Math.PI/2 + 0.4, trunkWidth*0.6, 3);
     }, 400);
 
     setTimeout(() => {
+        // Copa
         growSubBranches(startX, trunkTopY, trunkHeight*0.3, -Math.PI/2 - 0.2, trunkWidth*0.5, 3);
         growSubBranches(startX, trunkTopY, trunkHeight*0.3, -Math.PI/2 + 0.2, trunkWidth*0.5, 3);
     }, 600);
 
-    // C. Corazones
+    // Corazones
     setTimeout(() => {
         if(isAnimating) generateDenseHearts(trunkTopY);
     }, 2000);
@@ -135,13 +127,11 @@ function growSubBranches(x, y, len, angle, width, depth) {
 }
 
 
-// --- GENERAR CORAZONES ---
+// --- 3. CORAZONES ---
 function generateDenseHearts(trunkTopY) {
     const centerX = canvas.width / 2;
-    // Copa centrada un poco más arriba del fin del tronco
     const centerY = trunkTopY - (canvas.height * 0.05); 
-    // Escala basada en pantalla
-    const scale = Math.min(canvas.width, canvas.height) * 0.02; 
+    const scale = Math.min(canvas.width, canvas.height) * 0.02; // Escala móvil
     const totalLeaves = 800; 
 
     let count = 0;
@@ -186,55 +176,63 @@ function createFixedLeaf(x, y, centerY) {
 }
 
 
-// --- SECUENCIA FINAL ---
+// --- 4. SECUENCIA FINAL CON FOTOS ---
 function startSequenceAndInfiniteFall() {
     setInterval(createInfiniteFallingHeart, 200);
 
     setTimeout(() => {
-        // En PC mueve a la derecha, en Móvil solo desenfoca
+        // En móvil solo desenfocamos
         if (window.innerWidth > 768) {
              treeWrapper.classList.add('move-wrapper-right');
         } else {
              treeWrapper.classList.add('blur-tree');
         }
         
-        textPanel.classList.add('show');
-        
-        // Escribir texto poco a poco
+        // MOSTRAR FOTOS (Secuencia)
+        showPhotos();
+
+        // MOSTRAR TEXTO DESPUÉS DE LAS FOTOS
         setTimeout(() => {
-            typeWriterReal(MENSAJE_HTML, typewriterContent);
-        }, 1000);
+            textPanel.classList.add('show');
+            setTimeout(() => {
+                 typeWriterReal(MENSAJE_HTML, typewriterContent);
+            }, 500);
+        }, 1500);
         
     }, 1000);
 }
 
-// --- MÁQUINA DE ESCRIBIR REAL (Letra por letra) ---
+// Nueva función para mostrar fotos
+function showPhotos() {
+    const p1 = document.querySelector('.p1');
+    const p2 = document.querySelector('.p2');
+    const p3 = document.querySelector('.p3');
+    
+    if(p1) setTimeout(() => p1.classList.add('show'), 100);
+    if(p2) setTimeout(() => p2.classList.add('show'), 600);
+    if(p3) setTimeout(() => p3.classList.add('show'), 1100);
+}
+
 function typeWriterReal(html, element) {
     element.innerHTML = "";
     let i = 0;
-    
     function type() {
         if (i < html.length) {
             let char = html.charAt(i);
-            
-            // Si es una etiqueta HTML, la agregamos entera de golpe
             if (char === "<") {
                 let tag = "";
                 while (html.charAt(i) !== ">" && i < html.length) {
-                    tag += html.charAt(i);
-                    i++;
+                    tag += html.charAt(i); i++;
                 }
-                tag += ">";
-                i++;
+                tag += ">"; i++;
                 element.innerHTML += tag;
-                type(); // Seguir inmediatamente sin pausa
+                type();
             } else {
                 element.innerHTML += char;
                 i++;
-                setTimeout(type, 50); // Velocidad de escritura
+                setTimeout(type, 50);
             }
         } else {
-            // Fin del texto, mostrar timer
             document.getElementById('timer').classList.remove('hidden');
             startTimer();
         }
