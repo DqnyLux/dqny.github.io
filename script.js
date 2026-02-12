@@ -2,11 +2,14 @@
 const FECHA_INICIO = new Date("2023-08-23"); 
 const MENSAJE_HTML = `
 <h1>Para mi amor:</h1>
-Igual que este árbol florece,
-mi amor por ti crece cada día.
+Como las hojas de este árbol,
+mi amor por ti es infinito.
 
-Eres mi lugar seguro y
-mi momento favorito.
+Aunque el tiempo pase y el
+viento sople, mis raíces
+siempre estarán contigo.
+
+Gracias por hacerme feliz.
 <br>
 <strong>¡Te Amo!</strong>
 `;
@@ -34,22 +37,26 @@ resizeCanvas();
 
 let isAnimating = false;
 let leavesArray = []; 
+let player; 
 
-// --- 1. CLIC INICIAL ---
+// --- YOUTUBE API ---
+window.onYouTubeIframeAPIReady = function() {
+    player = new YT.Player('player', {
+        height: '1', width: '1',
+        videoId: YOUTUBE_VIDEO_ID,
+        playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': YOUTUBE_VIDEO_ID, 'playsinline': 1 },
+        events: { 'onReady': (e) => e.target.setVolume(70) }
+    });
+};
+
+// --- CLIC INICIAL ---
 heartTrigger.addEventListener('click', () => {
     if(isAnimating) return;
     isAnimating = true;
     instruction.style.opacity = 0;
     
-    // Música iframe (Método infalible)
-    const musicIframe = document.createElement('iframe');
-    musicIframe.setAttribute('src', `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&loop=1&playlist=${YOUTUBE_VIDEO_ID}&controls=0&showinfo=0&autohide=1&mute=0`);
-    musicIframe.style.width = '1px'; musicIframe.style.height = '1px';
-    musicIframe.style.opacity = '0'; musicIframe.style.position = 'absolute';
-    musicIframe.allow = "autoplay"; 
-    document.body.appendChild(musicIframe);
+    if (player && player.playVideo) player.playVideo();
 
-    // Gota
     heartPath.setAttribute('d', 'M12,2c-5,0-9,4-9,9c0,5,9,13,9,13s9-8,9-13C21,6,17,2,12,2z');
     heartPath.style.fill = "#8d6e63";
 
@@ -61,19 +68,15 @@ heartTrigger.addEventListener('click', () => {
     }, 500);
 });
 
-
-// --- 2. ÁRBOL PROPORCIONAL (SOLUCIÓN AL TRONCO GRANDE) ---
+// --- ÁRBOL ---
 function drawResponsiveTree() {
     const startX = canvas.width / 2;
     const startY = canvas.height;
     
-    // Altura del tronco: 40% de la pantalla
-    const trunkHeight = canvas.height * 0.4; 
+    // Tronco más corto para que quepa el corazón grande
+    const trunkHeight = canvas.height * 0.35; 
     const trunkTopY = startY - trunkHeight;
-    
-    // CORRECCIÓN: Grosor dinámico. Mínimo 8px, Máximo 22px, basado en el ancho.
-    // Esto hace que en celular el tronco sea fino y elegante.
-    const trunkWidth = Math.max(8, Math.min(22, canvas.width * 0.035)); 
+    const trunkWidth = Math.max(10, Math.min(20, canvas.width * 0.04)); 
 
     // Tronco
     ctx.beginPath();
@@ -84,31 +87,31 @@ function drawResponsiveTree() {
     ctx.lineCap = "round";
     ctx.stroke();
 
-    // Ramas
+    // Ramas (MÁS PEQUEÑAS - 50%)
     setTimeout(() => {
-        let h = trunkHeight * 0.75;
-        growSubBranches(startX, startY - h, h*0.5, -Math.PI/2 - 0.7, trunkWidth*0.7, 3);
-        growSubBranches(startX, startY - h, h*0.5, -Math.PI/2 + 0.7, trunkWidth*0.7, 3);
+        let h = trunkHeight * 0.7;
+        growSubBranches(startX, startY - h, h*0.4, -Math.PI/2 - 0.7, trunkWidth*0.7, 3);
+        growSubBranches(startX, startY - h, h*0.4, -Math.PI/2 + 0.7, trunkWidth*0.7, 3);
     }, 200);
 
     setTimeout(() => {
-        let h = trunkHeight * 0.95; // Casi arriba
-        growSubBranches(startX, startY - h, h*0.4, -Math.PI/2 - 0.4, trunkWidth*0.6, 3);
-        growSubBranches(startX, startY - h, h*0.4, -Math.PI/2 + 0.4, trunkWidth*0.6, 3);
+        let h = trunkHeight * 0.9;
+        growSubBranches(startX, startY - h, h*0.3, -Math.PI/2 - 0.4, trunkWidth*0.6, 3);
+        growSubBranches(startX, startY - h, h*0.3, -Math.PI/2 + 0.4, trunkWidth*0.6, 3);
     }, 400);
 
     setTimeout(() => {
-        // Copa
-        growSubBranches(startX, trunkTopY, trunkHeight*0.3, -Math.PI/2 - 0.2, trunkWidth*0.5, 3);
-        growSubBranches(startX, trunkTopY, trunkHeight*0.3, -Math.PI/2 + 0.2, trunkWidth*0.5, 3);
+        growSubBranches(startX, trunkTopY, trunkHeight*0.25, -Math.PI/2 - 0.2, trunkWidth*0.5, 3);
+        growSubBranches(startX, trunkTopY, trunkHeight*0.25, -Math.PI/2 + 0.2, trunkWidth*0.5, 3);
     }, 600);
 
     // Corazones
     setTimeout(() => {
         if(isAnimating) generateDenseHearts(trunkTopY);
-    }, 2000);
+    }, 1500);
 }
 
+// Función recursiva de ramas (Cortas)
 function growSubBranches(x, y, len, angle, width, depth) {
     if (depth <= 0) return;
     const endX = x + len * Math.cos(angle);
@@ -120,31 +123,38 @@ function growSubBranches(x, y, len, angle, width, depth) {
     ctx.lineWidth = width;
     ctx.lineCap = "round";
     ctx.stroke();
+    // Factor de reducción 0.6 hace que se acorten rápido
     setTimeout(() => {
-        growSubBranches(endX, endY, len*0.7, angle - 0.35, width*0.7, depth - 1);
-        growSubBranches(endX, endY, len*0.7, angle + 0.35, width*0.7, depth - 1);
-    }, 150);
+        growSubBranches(endX, endY, len*0.6, angle - 0.4, width*0.7, depth - 1);
+        growSubBranches(endX, endY, len*0.6, angle + 0.4, width*0.7, depth - 1);
+    }, 100);
 }
 
 
-// --- 3. CORAZONES ---
+// --- GENERACIÓN RÁPIDA Y CORAZÓN GRANDE ---
 function generateDenseHearts(trunkTopY) {
     const centerX = canvas.width / 2;
-    const centerY = trunkTopY - (canvas.height * 0.05); 
-    const scale = Math.min(canvas.width, canvas.height) * 0.02; // Escala móvil
-    const totalLeaves = 800; 
+    // Centro ajustado
+    const centerY = trunkTopY - (canvas.height * 0.1); 
+    // CORAZÓN MÁS GRANDE (0.025 en lugar de 0.02)
+    const scale = Math.min(canvas.width, canvas.height) * 0.025; 
+    const totalLeaves = 900; 
 
     let count = 0;
     const interval = setInterval(() => {
         if (count >= totalLeaves) {
             clearInterval(interval);
-            setTimeout(startSequenceAndInfiniteFall, 1500);
+            setTimeout(startSequenceAndInfiniteFall, 1000);
             return;
         }
-        const pos = getHeartPosition(centerX, centerY, scale);
-        createFixedLeaf(pos.x, pos.y, centerY);
-        count++;
-    }, 1);
+        
+        // GENERACIÓN MUY RÁPIDA (5 por ciclo)
+        for(let i=0; i<5; i++) {
+            const pos = getHeartPosition(centerX, centerY, scale);
+            createFixedLeaf(pos.x, pos.y, centerY);
+            count++;
+        }
+    }, 1); // 1ms
 }
 
 function getHeartPosition(centerX, centerY, scale) {
@@ -165,7 +175,7 @@ function createFixedLeaf(x, y, centerY) {
     el.style.color = heartColors[Math.floor(Math.random() * heartColors.length)];
     
     let size = Math.random() * 10 + 5; 
-    if (y > centerY + (canvas.height*0.1)) size *= 0.6; 
+    if (y > centerY + (canvas.height*0.15)) size *= 0.6; // Hojas de abajo más pequeñas
     el.style.setProperty('--size', `${size}px`);
     
     const rot = Math.random()*60 - 30;
@@ -176,22 +186,20 @@ function createFixedLeaf(x, y, centerY) {
 }
 
 
-// --- 4. SECUENCIA FINAL CON FOTOS ---
+// --- SECUENCIA FINAL ---
 function startSequenceAndInfiniteFall() {
     setInterval(createInfiniteFallingHeart, 200);
 
     setTimeout(() => {
-        // En móvil solo desenfocamos
         if (window.innerWidth > 768) {
              treeWrapper.classList.add('move-wrapper-right');
         } else {
              treeWrapper.classList.add('blur-tree');
         }
         
-        // MOSTRAR FOTOS (Secuencia)
+        // MOSTRAR FOTOS
         showPhotos();
 
-        // MOSTRAR TEXTO DESPUÉS DE LAS FOTOS
         setTimeout(() => {
             textPanel.classList.add('show');
             setTimeout(() => {
@@ -202,15 +210,33 @@ function startSequenceAndInfiniteFall() {
     }, 1000);
 }
 
-// Nueva función para mostrar fotos
+// FUNCIONES DE FOTOS CON ZOOM
 function showPhotos() {
-    const p1 = document.querySelector('.p1');
-    const p2 = document.querySelector('.p2');
-    const p3 = document.querySelector('.p3');
-    
-    if(p1) setTimeout(() => p1.classList.add('show'), 100);
-    if(p2) setTimeout(() => p2.classList.add('show'), 600);
-    if(p3) setTimeout(() => p3.classList.add('show'), 1100);
+    const photos = document.querySelectorAll('.polaroid');
+    photos.forEach((p, index) => {
+        setTimeout(() => p.classList.add('show'), index * 500);
+        
+        // AGREGAR EVENTO DE CLICK/TOUCH PARA ZOOM
+        p.addEventListener('click', function(e) {
+            e.stopPropagation(); // Evitar que el click pase al fondo
+            
+            // Si ya tiene zoom, quitárselo
+            if (this.classList.contains('zoomed')) {
+                this.classList.remove('zoomed');
+            } else {
+                // Quitar zoom a cualquier otra foto primero
+                photos.forEach(ph => ph.classList.remove('zoomed'));
+                
+                // Poner zoom a esta
+                this.classList.add('zoomed');
+                
+                // Quitar zoom automáticamente después de 3 segundos
+                setTimeout(() => {
+                    this.classList.remove('zoomed');
+                }, 3000);
+            }
+        });
+    });
 }
 
 function typeWriterReal(html, element) {
@@ -221,16 +247,10 @@ function typeWriterReal(html, element) {
             let char = html.charAt(i);
             if (char === "<") {
                 let tag = "";
-                while (html.charAt(i) !== ">" && i < html.length) {
-                    tag += html.charAt(i); i++;
-                }
-                tag += ">"; i++;
-                element.innerHTML += tag;
-                type();
+                while (html.charAt(i) !== ">" && i < html.length) { tag += html.charAt(i); i++; }
+                tag += ">"; i++; element.innerHTML += tag; type();
             } else {
-                element.innerHTML += char;
-                i++;
-                setTimeout(type, 50);
+                element.innerHTML += char; i++; setTimeout(type, 50);
             }
         } else {
             document.getElementById('timer').classList.remove('hidden');
@@ -242,10 +262,10 @@ function typeWriterReal(html, element) {
 
 function createInfiniteFallingHeart() {
     const centerX = canvas.width / 2;
-    const trunkHeight = canvas.height * 0.4;
+    const trunkHeight = canvas.height * 0.35;
     const trunkTopY = canvas.height - trunkHeight;
-    const centerY = trunkTopY - (canvas.height * 0.05);
-    const scale = Math.min(canvas.width, canvas.height) * 0.02;
+    const centerY = trunkTopY - (canvas.height * 0.1);
+    const scale = Math.min(canvas.width, canvas.height) * 0.025;
 
     const pos = getHeartPosition(centerX, centerY, scale);
     const el = document.createElement('div');
