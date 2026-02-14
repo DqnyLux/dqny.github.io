@@ -1,21 +1,21 @@
 // --- CONFIGURACIÓN ---
 const FECHA_INICIO = new Date("2023-08-23"); 
 
-// TU NUEVO MENSAJE (Formateado)
+// MENSAJE NUEVO: Sincero, directo y amoroso.
 const MENSAJE_HTML = `
-<h1>Hola Angélica, mi amor, mi vida, mi todo</h1>
+<h1>Hola Angélica, mi amor.</h1>
 
-<p>Sé que ya no somos pareja y que me volviste a terminar.</p>
+<p>Sé que ya no somos pareja y que nuestros caminos se separaron, pero mi corazón no entiende de finales.</p>
 
-<p>Pero bueno, ahora solo quiero decirte que lamento haberte enamorado y no vivir cerca para apoyarte y darte un abrazo todos los días.</p>
+<p>Solo quiero decirte que, a pesar de haber terminado, <strong>te amo</strong>. Te sigo amando profundamente hoy y te seguiré amando siempre, porque lo que siento por ti es real y sincero.</p>
 
-<p>Perdón por todo, gracias por todo.</p>
+<p>Gracias por todo lo que compartimos.</p>
 
-<p><strong>Perdón por darte tan poco.</strong></p>
+<p><strong>Siempre serás mi vida.</strong></p>
 `;
 
 const heartColors = ['#d32f2f', '#c2185b', '#e91e63', '#ff4081', '#f48fb1', '#ffcdd2'];
-const YOUTUBE_VIDEO_ID = "2Y4zvxK0wYM"; 
+const YOUTUBE_VIDEO_ID = "Y2Vnjmb2gFs"; 
 
 const heartTrigger = document.getElementById('heart-trigger');
 const heartPath = document.getElementById('heart-path');
@@ -26,7 +26,7 @@ const treeWrapper = document.getElementById('tree-wrapper');
 const textPanel = document.getElementById('textPanel');
 const typewriterContent = document.getElementById('typewriter-content');
 
-// Ajustar Casnvas
+// Ajustar Canvas
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -55,7 +55,6 @@ heartTrigger.addEventListener('click', function(e) {
     
     if (player && player.playVideo) player.playVideo();
 
-    // Animación Gota
     heartPath.setAttribute('d', 'M12,2c-5,0-9,4-9,9c0,5,9,13,9,13s9-8,9-13C21,6,17,2,12,2z');
     heartPath.style.fill = "#8d6e63";
 
@@ -206,7 +205,7 @@ function typeWriterReal(html, el) {
             } else {
                 el.innerHTML += char;
                 i++;
-                setTimeout(type, Math.random() * 20 + 10); 
+                setTimeout(type, Math.random() * 30 + 30); // Velocidad natural
             }
         } else {
             document.getElementById('timer').classList.remove('hidden');
