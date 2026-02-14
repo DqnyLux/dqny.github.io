@@ -1,16 +1,15 @@
 // --- CONFIGURACIÓN ---
 const FECHA_INICIO = new Date("2023-08-23"); 
+// TU MENSAJE COMPLETO FORMATEADO CON HTML PARA QUE SE LEA BIEN
 const MENSAJE_HTML = `
-<h1>Para mi amor:</h1>
-Como las hojas de este árbol,
-mi amor por ti crece y se 
-vuelve infinito.
-
-Eres mi refugio y mi paz.
-Gracias por ser tú.
-
-<br>
-<strong>¡Te Amo!</strong>
+<h1>Hola Mi amor, Angélica</h1>
+<p>Sé que no somos pareja y pensé que ya no me volverías a terminar, pero por lo visto no fue así. Lo pensé mucho y ya no te rogaré. Puede que te dé igual o no, pero créeme que no eres la mala en nada, solo que tuviste un pasado complicado en el cual no te trataron como te mereces, como una reina.</p>
+<p>Mi pasado también fue muy triste y desolado. Contigo me sentí muy diferente y pensé que llegaríamos muy lejos con nuestra relación: el vivir juntos, casarnos, tener una familia. Pero claro, tuvimos que vivir en polos diferentes del país.</p>
+<p>Yo sigo con muchas ganas e ilusión de irme a vivir contigo, y se me quedan cosas grabadas que me dijiste, que no querías que deje todo para irme contigo y demás, pero quise seguir haciéndolo. Se complicaron muchas cosas, terminamos nuevamente, tú cambiando por los problemas que tienes y yo sintiéndome mal por cómo actúas conmigo.</p>
+<p>En serio que lo único que quiero de ti es tu amor, que luches por nosotros. Tú me reviviste en un mundo del cual ya no quería saber nada, del cual me destruía poco a poco. Me hiciste sentir vivo nuevamente.</p>
+<p>Sé que ahora mismo no quieres estar en una relación porque tienes cosas más importantes, como cuidar a tu mamá, y lo entiendo, pero no había necesidad de llegar al punto de terminarme. Sé que tú no me rogarás y puede que no me busques después de todo esto que te digo, pero yo ya lo hice muchas veces y si no quieres, lo entenderé.</p>
+<p>Para que te quede claro: en este tiempo no salí ni me interesó conocer a alguien más que no seas tú. El hecho de haber viajado para conocerte, viajar solo para pedirte perdón, el casi tener una familia significaron mucho para mí, lo es todo.</p>
+<p>Lo diré por última vez: <strong>te amo Angélica</strong> y quiero que seas muy feliz. Que seas feliz con o sin mí, con tal de que seas feliz.</p>
 `;
 
 const heartColors = ['#d32f2f', '#c2185b', '#e91e63', '#ff4081', '#f48fb1', '#ffcdd2'];
@@ -25,7 +24,6 @@ const treeWrapper = document.getElementById('tree-wrapper');
 const textPanel = document.getElementById('textPanel');
 const typewriterContent = document.getElementById('typewriter-content');
 
-// Ajustar Canvas
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -46,22 +44,15 @@ window.onYouTubeIframeAPIReady = function() {
     });
 };
 
-// --- CLIC INICIAL ---
+// --- CLIC INICIAL (CORREGIDO MÚSICA DOBLE) ---
 heartTrigger.addEventListener('click', function(e) {
     if(isAnimating) return;
     isAnimating = true;
     instruction.style.opacity = 0;
     
-    // Música Iframe Backup + API
-    const musicIframe = document.createElement('iframe');
-    musicIframe.setAttribute('src', `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&loop=1&playlist=${YOUTUBE_VIDEO_ID}&controls=0&showinfo=0&autohide=1&mute=0&playsinline=1`);
-    musicIframe.style.cssText = "width:1px;height:1px;opacity:0;position:absolute;";
-    musicIframe.allow = "autoplay"; 
-    document.body.appendChild(musicIframe);
-    
+    // SOLO USAMOS LA API, ELIMINADO EL IFRAME REDUNDANTE
     if (player && player.playVideo) player.playVideo();
 
-    // Animación Gota
     heartPath.setAttribute('d', 'M12,2c-5,0-9,4-9,9c0,5,9,13,9,13s9-8,9-13C21,6,17,2,12,2z');
     heartPath.style.fill = "#8d6e63";
 
@@ -86,7 +77,6 @@ function drawResponsiveTree() {
     ctx.quadraticCurveTo(startX + (trunkWidth/3), startY - trunkHeight / 2, startX, trunkTopY);
     ctx.strokeStyle = "#5d4037"; ctx.lineWidth = trunkWidth; ctx.lineCap = "round"; ctx.stroke();
 
-    // Ramas rápidas (Optimizadas)
     const grow = (x, y, l, a, w, d) => {
         if(d<=0) return;
         const ex = x + l * Math.cos(a); const ey = y + l * Math.sin(a);
@@ -143,16 +133,12 @@ function generateHearts(trunkTopY) {
 
 // --- SECUENCIA FINAL ---
 function startFinalSequence() {
-    // 1. Mostrar Fotos
     showPhotos();
-
-    // 2. Mostrar Texto
     setTimeout(() => {
         textPanel.classList.add('show');
         typeWriterReal(MENSAJE_HTML, typewriterContent);
     }, 1500);
 
-    // 3. Caída infinita suave
     setInterval(() => {
         const el = document.createElement('div');
         el.classList.add('infinite-flower'); el.innerHTML = '❤';
@@ -165,31 +151,28 @@ function startFinalSequence() {
     }, 300);
 }
 
-// --- LÓGICA DE FOTOS (ZOOM SOLIDO) ---
+// --- LÓGICA DE FOTOS (ZOOM CORREGIDO) ---
 function showPhotos() {
     const photos = document.querySelectorAll('.polaroid');
     photos.forEach((p, index) => {
         setTimeout(() => p.classList.add('show'), index * 600);
         
-        // EVENTO DE ZOOM
         p.addEventListener('click', function(e) {
-            e.stopPropagation(); // Evitar que el click cierre inmediatamente
-            
+            e.stopPropagation(); 
             const isZoomed = this.classList.contains('zoomed');
             
-            // Resetear todas
+            // Resetear
             photos.forEach(ph => ph.classList.remove('zoomed'));
             document.body.classList.remove('overlay-active');
             
-            // Si no estaba zoomeada, hacer zoom
+            // Zoom
             if (!isZoomed) {
                 this.classList.add('zoomed');
-                document.body.classList.add('overlay-active'); // Oscurecer fondo
+                document.body.classList.add('overlay-active'); // Activar fondo oscuro
             }
         });
     });
     
-    // Cerrar si tocas fuera
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.polaroid')) {
             photos.forEach(ph => ph.classList.remove('zoomed'));
@@ -198,17 +181,32 @@ function showPhotos() {
     });
 }
 
+// --- MÁQUINA DE ESCRIBIR MEJORADA PARA HTML ---
 function typeWriterReal(html, el) {
     el.innerHTML = ""; let i = 0;
+    // Función auxiliar para procesar etiquetas HTML
+    function getNextTag(startIndex) {
+        let tag = "";
+        for (let j = startIndex; j < html.length; j++) {
+            tag += html.charAt(j);
+            if (html.charAt(j) === ">") break;
+        }
+        return tag;
+    }
+
     function type() {
-        if(i < html.length) {
-            let c = html.charAt(i);
-            if(c === "<") {
-                let tag = "";
-                while(html.charAt(i) !== ">") { tag += html.charAt(i); i++; }
-                tag += ">"; i++; el.innerHTML += tag; type();
+        if (i < html.length) {
+            let char = html.charAt(i);
+            if (char === "<") {
+                let tag = getNextTag(i);
+                el.innerHTML += tag;
+                i += tag.length;
+                type(); // No esperar para etiquetas
             } else {
-                el.innerHTML += c; i++; setTimeout(type, 50);
+                el.innerHTML += char;
+                i++;
+                // Velocidad variable para realismo
+                setTimeout(type, Math.random() * 30 + 20); 
             }
         } else {
             document.getElementById('timer').classList.remove('hidden');
