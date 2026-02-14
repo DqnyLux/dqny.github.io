@@ -12,10 +12,12 @@ const MENSAJE_HTML = `
 <p>Gracias por todo lo que compartimos.</p>
 
 <p><strong>Siempre serás mi vida.</strong></p>
+
+<p> Te quería invitar una papi Pollo y compartirla contigo :(</>
 `;
 
 const heartColors = ['#d32f2f', '#c2185b', '#e91e63', '#ff4081', '#f48fb1', '#ffcdd2'];
-const YOUTUBE_VIDEO_ID = "Y2Vnjmb2gFs"; 
+const YOUTUBE_VIDEO_ID = "2Y4zvxK0wYM"; 
 
 const heartTrigger = document.getElementById('heart-trigger');
 const heartPath = document.getElementById('heart-path');
