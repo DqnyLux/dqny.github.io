@@ -1,15 +1,17 @@
 // --- CONFIGURACIÓN ---
 const FECHA_INICIO = new Date("2023-08-23"); 
-// TU MENSAJE COMPLETO FORMATEADO CON HTML PARA QUE SE LEA BIEN
+
+// TU NUEVO MENSAJE (Formateado)
 const MENSAJE_HTML = `
-<h1>Hola Mi amor, Angélica</h1>
-<p>Sé que no somos pareja y pensé que ya no me volverías a terminar, pero por lo visto no fue así. Lo pensé mucho y ya no te rogaré. Puede que te dé igual o no, pero créeme que no eres la mala en nada, solo que tuviste un pasado complicado en el cual no te trataron como te mereces, como una reina.</p>
-<p>Mi pasado también fue muy triste y desolado. Contigo me sentí muy diferente y pensé que llegaríamos muy lejos con nuestra relación: el vivir juntos, casarnos, tener una familia. Pero claro, tuvimos que vivir en polos diferentes del país.</p>
-<p>Yo sigo con muchas ganas e ilusión de irme a vivir contigo, y se me quedan cosas grabadas que me dijiste, que no querías que deje todo para irme contigo y demás, pero quise seguir haciéndolo. Se complicaron muchas cosas, terminamos nuevamente, tú cambiando por los problemas que tienes y yo sintiéndome mal por cómo actúas conmigo.</p>
-<p>En serio que lo único que quiero de ti es tu amor, que luches por nosotros. Tú me reviviste en un mundo del cual ya no quería saber nada, del cual me destruía poco a poco. Me hiciste sentir vivo nuevamente.</p>
-<p>Sé que ahora mismo no quieres estar en una relación porque tienes cosas más importantes, como cuidar a tu mamá, y lo entiendo, pero no había necesidad de llegar al punto de terminarme. Sé que tú no me rogarás y puede que no me busques después de todo esto que te digo, pero yo ya lo hice muchas veces y si no quieres, lo entenderé.</p>
-<p>Para que te quede claro: en este tiempo no salí ni me interesó conocer a alguien más que no seas tú. El hecho de haber viajado para conocerte, viajar solo para pedirte perdón, el casi tener una familia significaron mucho para mí, lo es todo.</p>
-<p>Lo diré por última vez: <strong>te amo Angélica</strong> y quiero que seas muy feliz. Que seas feliz con o sin mí, con tal de que seas feliz.</p>
+<h1>Hola Angélica, mi amor, mi vida, mi todo</h1>
+
+<p>Sé que ya no somos pareja y que me volviste a terminar.</p>
+
+<p>Pero bueno, ahora solo quiero decirte que lamento haberte enamorado y no vivir cerca para apoyarte y darte un abrazo todos los días.</p>
+
+<p>Perdón por todo, gracias por todo.</p>
+
+<p><strong>Perdón por darte tan poco.</strong></p>
 `;
 
 const heartColors = ['#d32f2f', '#c2185b', '#e91e63', '#ff4081', '#f48fb1', '#ffcdd2'];
@@ -24,6 +26,7 @@ const treeWrapper = document.getElementById('tree-wrapper');
 const textPanel = document.getElementById('textPanel');
 const typewriterContent = document.getElementById('typewriter-content');
 
+// Ajustar Canvas
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -44,15 +47,15 @@ window.onYouTubeIframeAPIReady = function() {
     });
 };
 
-// --- CLIC INICIAL (CORREGIDO MÚSICA DOBLE) ---
+// --- CLIC INICIAL ---
 heartTrigger.addEventListener('click', function(e) {
     if(isAnimating) return;
     isAnimating = true;
     instruction.style.opacity = 0;
     
-    // SOLO USAMOS LA API, ELIMINADO EL IFRAME REDUNDANTE
     if (player && player.playVideo) player.playVideo();
 
+    // Animación Gota
     heartPath.setAttribute('d', 'M12,2c-5,0-9,4-9,9c0,5,9,13,9,13s9-8,9-13C21,6,17,2,12,2z');
     heartPath.style.fill = "#8d6e63";
 
@@ -151,7 +154,7 @@ function startFinalSequence() {
     }, 300);
 }
 
-// --- LÓGICA DE FOTOS (ZOOM CORREGIDO) ---
+// --- LÓGICA DE FOTOS ---
 function showPhotos() {
     const photos = document.querySelectorAll('.polaroid');
     photos.forEach((p, index) => {
@@ -161,14 +164,12 @@ function showPhotos() {
             e.stopPropagation(); 
             const isZoomed = this.classList.contains('zoomed');
             
-            // Resetear
             photos.forEach(ph => ph.classList.remove('zoomed'));
             document.body.classList.remove('overlay-active');
             
-            // Zoom
             if (!isZoomed) {
                 this.classList.add('zoomed');
-                document.body.classList.add('overlay-active'); // Activar fondo oscuro
+                document.body.classList.add('overlay-active'); 
             }
         });
     });
@@ -181,10 +182,10 @@ function showPhotos() {
     });
 }
 
-// --- MÁQUINA DE ESCRIBIR MEJORADA PARA HTML ---
+// --- MÁQUINA DE ESCRIBIR HTML ---
 function typeWriterReal(html, el) {
     el.innerHTML = ""; let i = 0;
-    // Función auxiliar para procesar etiquetas HTML
+    
     function getNextTag(startIndex) {
         let tag = "";
         for (let j = startIndex; j < html.length; j++) {
@@ -201,12 +202,11 @@ function typeWriterReal(html, el) {
                 let tag = getNextTag(i);
                 el.innerHTML += tag;
                 i += tag.length;
-                type(); // No esperar para etiquetas
+                type(); 
             } else {
                 el.innerHTML += char;
                 i++;
-                // Velocidad variable para realismo
-                setTimeout(type, Math.random() * 30 + 20); 
+                setTimeout(type, Math.random() * 20 + 10); 
             }
         } else {
             document.getElementById('timer').classList.remove('hidden');
